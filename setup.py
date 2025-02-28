@@ -1,0 +1,29 @@
+from setuptools import setup, find_packages
+
+setup(
+    name='dotate',
+    version='0.1.0',
+    description='A bioinformatics tool for annotating protein domains based on HMM domain table output.',
+    author='Andre Lecona Buttelli',
+    author_email='andrelecona@elsi.com',
+    url='https://github.com/AndreLecona/Dotate',
+    license="GPL-3.0-or-later",
+    packages=find_packages(include=['dotate_core', 'dotate_core.*']),
+    install_requires=[
+        'pandas>=1.0',
+        'tqdm>=4.0',
+        'mysql-connector-python>=8.0',
+        'sqlalchemy>=1.3',
+    ],
+    entry_points={
+        'console_scripts': [
+            'dotate=bin.run_dotate:main',
+        ],
+    },
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'Operating System :: OS Independent',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+    ],
+    python_requires='>=3.6',
+)
