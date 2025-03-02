@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='dotate',
-    version='1.0.0',
+    version='1.0.2',
     description='A tool for annotating protein domains based on HMMserach domain-table output.',
     author='Andre Lecona Buttelli',
     author_email='andrelecona@elsi.com',
@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'dotate=bin.run_dotate:main',
+            'dotate=dotate_core.argparse:main',
         ],
     },
     classifiers=[
