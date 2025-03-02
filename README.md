@@ -35,7 +35,7 @@ Clone the repository and install the package:
 
 ```bash
 git clone https://github.com/AndreLecona/Dotate.git
-pip install dotate
+pip install ./dotate
 ```
 
 ## License
