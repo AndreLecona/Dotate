@@ -1,27 +1,27 @@
 # Licensed under GPLv3 - see LICENSE
 
 """
-Dotate: A bioinformatics tool for annotating protein domains based on HMMsearch domain-table output.
+Dotate: A tool for annotating ECOD protein domains based on HMM profile search
 
 Provides functionality to search ECOD (Evolutionary Classification of Protein Domains) domains
-using HMM (Hidden Markov Model) domain table output files and store the resulting annotations in an SQL database.
+using HMMsearch domain-table output files and stores the resulting annotations in an SQL database.
 
 Main Features:
 - Annotate protein domains based on HMM search results.
 - Supports searching ECOD domains.
 - Store domain annotations in a database for later querying.
 
-Version: 0.1.0
+Version: 1.0.0
 Author: Andre Lecona Buttelli
 Email: andrelecona@elsi.jp
 """
 
 #metadata
-__version__ = '0.1.0'
+__version__ = '1.0.0'
 __author__ = 'Andre Lecona Buttelli'
 __author_email__ = 'andrelecona@elsi.jp'
 __description__ = 'Dotate: A bioinformatics tool for annotating protein domains based on HMMsearch domain-table output.'
-__url__ = 'https://github.com/yourusername/dotate'
+__url__ = 'https://github.com/AndreLecona/Dotate'
 
 # Expose important functionality for users
 from .core import dotate

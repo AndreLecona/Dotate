@@ -1,5 +1,5 @@
 # Dotate - A tool for annotating ECOD protein domains based on HMM profile search
-# Copyright (C) 2024 ELSI - Andre Lecona
+# Copyright (C) 2025 ELSI - Andre Lecona
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ def add_gap_rows(df, amino):
         return {
             'target_name': df.iloc[0]['target_name'],
             'tlen': 0,
-            'query_name': 'Unannotated',
+            'query_name': 'UNN',
             'from_env': start,
             'to_env': end,
             'i_Evalue': 0,
@@ -179,7 +179,7 @@ def process_gene(df_gene, hmm_cov_co, iE_score_co, domain_cov_co, unanotated_co)
         tlen = df_gene['tlen'].iloc[0]
         unanotated_row = {
             'target_name': df_gene.iloc[0]['target_name'],
-            'f_id': 'Unannotated',
+            'f_id': 'UNN',
             'from_env': 0,
             'to_env': tlen,
             'i_Evalue': float('nan'),
@@ -188,7 +188,7 @@ def process_gene(df_gene, hmm_cov_co, iE_score_co, domain_cov_co, unanotated_co)
         }
         return pd.DataFrame([unanotated_row])
     
-    return filter_accepted_rows(df_cleaned, domain_cov_co, unanotated_co).rename(columns={'query_name': 'f_id'}, inplace=True)
+    return filter_accepted_rows(df_cleaned, domain_cov_co, unanotated_co).rename(columns={'query_name': 'f_id'})
 
 def ECODmapping(df):
 
@@ -206,7 +206,7 @@ def ECODmapping(df):
     """
 
     # Map the 'query_name' column to corresponding ECOD IDs from the mapping data
-    df['f_id'] = df['f_id'].map(f2x_mapping).fillna('Unannotated')
+    df['f_id'] = df['f_id'].map(f2x_mapping).fillna('UNN')
 
     # Return the updated DataFrame
     return df
@@ -318,17 +318,46 @@ def store_SQL(hmm_file: str, df: pd.DataFrame, DB_CONFIG: dict):
     df.to_sql(name=table_name, con=engine, if_exists="replace", index=False)
     print(f"Data stored in database '{database}', table '{table_name}'.")
 
+def store_fasta(df: pd.DataFrame, output_file: str):
+    """
+    Writes a FASTA file grouping domain IDs by protein.
+    
+    Parameters:
+        df (pd.DataFrame): Input DataFrame with columns ['target_name', 'f_id', 'from_env', 'to_env'].
+        output_file (str): Path to the output FASTA file.
+    """
+    df = df.sort_values(by=['target_name', 'from_env'])
+
+    def format_f_id(group):
+        formatted_f_ids = []
+        for _, row in group.iterrows():
+            if row['f_id'] == 'UNN':
+                length = row['to_env'] - row['from_env'] + 1
+                formatted_f_ids.append(f'({length})')
+            else:
+                formatted_f_ids.append(row['f_id'])
+        return '-'.join(formatted_f_ids)
+    
+    grouped = df.groupby('target_name', group_keys=False)[['f_id', 'from_env', 'to_env']].apply(format_f_id).reset_index(name='f_id')
+
+    with open(output_file, 'w') as fasta:
+        for i, row in grouped.iterrows():
+            fasta.write(f">{row['target_name']}\n")
+            fasta.write(f"{row['f_id']}\n")
+            fasta.write("\n")
+
 if __name__ == "__main__":
     print("Starting DOTATE process...")
 
+    FASTA = 'testdotate.fasta'
     HMM = 'testdotate.tbl'
-    DB = 'TestDB'
+    SQL = "testdotate.sql.json"
 
     print(f"Processing HMM file: {HMM}")
 
     try:
         proteome_df = dotate(hmm_file=HMM)
-        unannotated_count = proteome_df['f_id'].eq('Unannotated').sum()
+        unannotated_count = proteome_df['f_id'].eq('UNN').sum()
         print(f"Annotation complete. Found {unannotated_count} 'Unannotated' entries.")
 
     except Exception as e:
@@ -336,10 +365,14 @@ if __name__ == "__main__":
         exit(1)
 
     try:
-        from dotate_core.utils import SQLconfig
+        store_fasta(proteome_df, FASTA)
+    except Exception as e:
+        print(f"Error during fasta creation: {e}")
+
+    try:
         print("SQL configuration found. Storing data...")
-        store_SQL(HMM, proteome_df, SQLconfig, DB)
-        print(f"Data successfully stored in database '{DB}'.")
+        store_SQL(HMM, proteome_df, SQL)
+        print(f"Data successfully stored in database.")
 
     except ModuleNotFoundError:
         print("SQL config file not found. Redirecting output to TSV file...")
@@ -358,4 +391,3 @@ if __name__ == "__main__":
         exit(1)
 
     print("Process completed.")
-

@@ -1,5 +1,5 @@
 # Dotate - A tool for annotating ECOD protein domains based on HMM profile search
-# Copyright (C) 2024 ELSI - Andre Lecona
+# Copyright (C) 2025 ELSI - Andre Lecona
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

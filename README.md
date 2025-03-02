@@ -1,24 +1,24 @@
 # Dotate: Annotate Protein Domains with HMM Output
 
-Dotate is a bioinformatics tool for annotating protein domains based on HMM domain table output. It is designed for searching ECOD domains and storing the results in a SQL database.
+Dotate is a tool for annotation of protein domains based on HMMsearch results. It is particularly useful as part of a bioinformatics proteomics pipeline, enabling the annotation of multiple proteomes or large protein databases. Dotate also supports integration with an SQL database for storing results. When working with ECOD HMM profiles, Dotate can use ECOD's F-ID notation for domain groups.
 
 ## Features:
-- Annotate protein domains using HMM domain tables.
-- Store results in a SQL database or as a TSV file.
-- Optimized for large datasets with chunk processing.
+- Annotate protein domains using from an HMMsearch domain-table out file.
+- Stores results in an SQL database, a TSV file, and/or a FASTA-like file.
+- Optimized for large datasets.
 
 ## Usage:
-dotate <HMMSEARCH_OUTFILE> [--help] [--ECODmapping] [--hmm_cov_co HMM_COV_CO] [--iEvalue_co IEVALUE_CO] [--domain_cov_co DOMAIN_COV_CO] [--unanotated_co UNANOTATED_CO] [--cores CORES] [--chunksize CHUNKSIZE] [--SQL SQL]
+dotate <HMMSEARCH_OUTFILE> [--help] [--ECODmapping] [--hmm_cc HMM_CC] [--iEvalue_co IEVALUE_CO] [--domain_cc DOMAIN_CC] [--unn_co UNN_CO] [--cores CORES] [--chunksize CHUNKSIZE] [--sql SQL] [--fasta FASTA]
 
 ## Example:
 Annotate a protein domain and store in SQL:
-- dotate testdotate.tbl --hmm_cov_co 0.8 --iE_score_co 0.005 --SQL my_database.db --ECODmapping
+- dotate testdotate.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --SQL my_database.json --ECODmapping
 
 Annotate and store as TSV file:
-- dotate testdotate.tbl --hmm_cov_co 0.8 --iE_score_co 0.005 --ECODmapping
+- dotate testdotate.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --ECODmapping
 
 ## SQLconfig
-Example for your SQLconfi.json file:
+Example for your SQLconfig.json file:
 
 ```json
 {
@@ -28,7 +28,6 @@ Example for your SQLconfi.json file:
     "database": "database"
 }
 ```
-
 
 ## Installation
 
