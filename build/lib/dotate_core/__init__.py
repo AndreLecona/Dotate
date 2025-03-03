@@ -17,7 +17,7 @@ Email: andrelecona@elsi.jp
 """
 
 #metadata
-__version__ = '1.1.0'
+__version__ = '1.0.2'
 __author__ = 'Andre Lecona Buttelli'
 __author_email__ = 'andrelecona@elsi.jp'
 __description__ = 'Dotate: A bioinformatics tool for annotating protein domains based on HMMsearch domain-table output.'

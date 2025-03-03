@@ -117,6 +117,7 @@ def main():
 
     try:
         if args.sql:
+            # Load the SQLconfig from the provided JSON file
             try:
                 SQLconfig = load_sql_config(args.sql)
                 print("SQL configuration found. Storing data...")
@@ -127,26 +128,18 @@ def main():
 
         # Save to specified output formats
         if args.tsv:
-            try:
-                proteome_df.to_csv(args.tsv, sep='\t', index=False, header=True)
-                print(f"Results saved to '{args.tsv}'.")
-            except Exception as e:
-                print(f"Error saving TSV file: {e}")
+            proteome_df.to_csv(args.tsv, sep='\t', index=False, header=True)
+            print(f"Results saved to '{args.tsv}'.")
 
         if args.fasta:
-            try:
-                store_fasta(proteome_df, args.fasta)
-                print(f"FASTA file saved to '{args.fasta}'.")
-            except Exception as e:
-                print(f"Error saving FASTA file: {e}")
+            store_fasta(proteome_df, args.fasta)
+            print(f"FASTA file saved to '{args.fasta}'.")
           
-        elif not args.sql and not args.tsv and not args.fasta:
-            try:
-                default_tsv = f"{os.path.splitext(HMM)[0]}.dotate.tsv"
-                proteome_df.to_csv(default_tsv, sep='\t', index=False, header=True)
-                print(f"Results saved to '{default_tsv}'.")
-            except Exception as e:
-                print(f"Error saving default TSV file: {e}")
+        else:
+            # Default TSV output if no SQL, no tsv flag, and no fasta
+            default_tsv = f"{os.path.splitext(HMM)[0]}.dotate.tsv"
+            proteome_df.to_csv(default_tsv, sep='\t', index=False, header=True)
+            print(f"Results saved to '{default_tsv}'.")
 
     except Exception as e:
         print(f"Unexpected error while storing data: {e}")

@@ -316,6 +316,7 @@ def store_SQL(hmm_file: str, df: pd.DataFrame, DB_CONFIG: dict):
 
     # Store the DataFrame in MySQL
     df.to_sql(name=table_name, con=engine, if_exists="replace", index=False)
+    print(f"Data stored in database '{database}', table '{table_name}'.")
 
 def store_fasta(df: pd.DataFrame, output_file: str):
     """
@@ -352,7 +353,7 @@ def store_fasta(df: pd.DataFrame, output_file: str):
 
 if __name__ == "__main__":
     FASTA = 'testdotate.fasta'
-    HMM = 'testdotate.tbl'
+    #HMM = 'testdotate.tbl'
     HMM = '/Users/longolab/Desktop/others/COG_hmm_domtblout/COG0001.tbl'
     SQL = 'SQLconfig.json'
 
