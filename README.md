@@ -11,10 +11,10 @@ Dotate is a tool for annotation of protein domains based on HMMsearch results. I
 dotate <HMMSEARCH_OUTFILE> [--help] [--ECODmapping] [--hmm_cc HMM_CC] [--iEvalue_co IEVALUE_CO] [--domain_cc DOMAIN_CC] [--unn_co UNN_CO] [--cores CORES] [--chunksize CHUNKSIZE] [--sql SQL] [--fasta FASTA]
 
 ## Example:
-(1) Independently run HMMER search:
+(1) Independently run HMMER search.
 - hmmsearch --domtblout result.tbl your_model.hmm your_sequences.fasta
 
-(2) Use DOTATE to annotate and parse your result  
+(2) Use DOTATE to annotate and parse your result.  
 Annotate a protein domain and store in SQL:
 - dotate result.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --SQL my_database.json --ECODmapping
 
