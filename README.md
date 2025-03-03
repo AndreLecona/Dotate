@@ -14,7 +14,7 @@ dotate <HMMSEARCH_OUTFILE> [--help] [--ECODmapping] [--hmm_cc HMM_CC] [--iEvalue
 (1) Independently run HMMER search:
 - hmmsearch --domtblout result.tbl your_model.hmm your_sequences.fasta
 
-(2) Use DOTATE to annotate and parse your result
+(2) Use DOTATE to annotate and parse your result  
 Annotate a protein domain and store in SQL:
 - dotate result.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --SQL my_database.json --ECODmapping
 
