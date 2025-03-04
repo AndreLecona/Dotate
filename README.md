@@ -35,13 +35,11 @@ Example for your SQLconfig.json file:
 
 ## Installation
 
-Clone the repository and install the package:
-
 ```bash
 pip install git+https://github.com/AndreLecona/Dotate.git
 ```
 
-Alternatively
+Alternatively, clone the repository and install the package:
 
 ```bash
 git clone https://github.com/AndreLecona/Dotate.git
