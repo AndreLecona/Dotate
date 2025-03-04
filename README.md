@@ -39,9 +39,11 @@ Clone the repository and install the package:
 
 ```bash
 pip install git+https://github.com/AndreLecona/Dotate.git
+```
 
-#Alternatively
+Alternatively
 
+``bash
 git clone https://github.com/AndreLecona/Dotate.git
 pip install ./dotate
 rm -rf ./dotate
