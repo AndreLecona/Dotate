@@ -43,7 +43,7 @@ pip install git+https://github.com/AndreLecona/Dotate.git
 
 Alternatively
 
-``bash
+```bash
 git clone https://github.com/AndreLecona/Dotate.git
 pip install ./dotate
 rm -rf ./dotate
