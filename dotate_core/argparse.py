@@ -82,7 +82,7 @@ def main():
     parser.add_argument('--sql', type=validate_file, help='Path to SQLconfig.json file.')
     parser.add_argument('--fasta', type=validate_path, help='Path to output FASTA file.')
     parser.add_argument('--tsv', type=validate_path, help='Path to output TSV file.')
-    parser.add_argument('--version', action='version', version='Dotate 1.1.0 (GPLv3)')
+    parser.add_argument('--version', action='version', version='Dotate 1.1.1 (GPLv3)')
 
     # Parse arguments
     args = parser.parse_args()
@@ -107,8 +107,8 @@ def main():
         )
 
         # Count unannotated entries
-        unannotated_count = proteome_df['f_id'].eq('UNN').sum()
-        annotated_count = proteome_df['f_id'].ne('UNN').sum()
+        unannotated_count = proteome_df['domain'].eq('UNN').sum()
+        annotated_count = proteome_df['domain'].ne('UNN').sum()
         print(f"Annotation complete. Found {annotated_count} domains and {unannotated_count} 'Unannotated' entries")
 
     except Exception as e:
