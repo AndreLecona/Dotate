@@ -4,7 +4,7 @@ Dotate is a tool for annotation of protein domains based on HMMsearch results. I
 
 ## Features:
 - Annotate protein domains using from an HMMsearch domain-table out file.
-- Stores results in an SQL database, a TSV file, and/or a FASTA-like file.
+- Stores results in an SQLite database, a TSV file, and/or a FASTA-like file.
 - Optimized for large datasets.
 
 ## Usage:
@@ -16,22 +16,10 @@ dotate <HMMSEARCH_OUTFILE> [--help] [--ECODmapping] [--hmm_cc HMM_CC] [--iEvalue
 
 (2) Use DOTATE to annotate and parse your result.  
 Annotate a protein domain and store in SQL:
-- dotate result.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --SQL my_database.json --ECODmapping
+- dotate result.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --sql my_database.db --ECODmapping
 
 Annotate and store as TSV file (default):
 - dotate result.tbl --hmm_cc 0.8 --iEvalue_co 0.005 --ECODmapping
-
-## SQLconfig
-Example for your SQLconfig.json file:
-
-```json
-{
-    "host": "000.000.00",
-    "user": "user",
-    "password": "password",
-    "database": "database"
-}
-```
 
 ## Installation
 

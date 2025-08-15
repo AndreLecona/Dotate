@@ -11,13 +11,13 @@ Main Features:
 - Supports searching ECOD domains.
 - Store domain annotations in a database for later querying.
 
-Version: 1.1.1
+Version: 1.2.0
 Author: Andre Lecona Buttelli
 Email: andrelecona@elsi.jp
 """
 
 #metadata
-__version__ = '1.1.1'
+__version__ = '1.2.0'
 __author__ = 'Andre Lecona Buttelli'
 __author_email__ = 'andrelecona@elsi.jp'
 __description__ = 'Dotate: A bioinformatics tool for annotating protein domains based on HMMsearch domain-table output.'

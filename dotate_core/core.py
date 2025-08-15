@@ -14,13 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-
 import os
+import json
+import sqlite3
 import pandas as pd
 from tqdm import tqdm
-import mysql.connector
 from multiprocessing import Pool
 from sqlalchemy import create_engine
+
 
 def clean_dataframe(df, hmmN, i_eN):
     """Cleans and filters the input DataFrame based on i_Evalue and HMM coverage.
@@ -192,11 +193,9 @@ def process_gene(df_gene, hmm_cov_co, iE_score_co, domain_cov_co, unanotated_co)
     return filter_accepted_rows(df_cleaned, domain_cov_co, unanotated_co).rename(columns={'query_name': 'domain'})
 
 def ECODmapping(df):
-
-    from dotate_core.utils import f2x_mapping
     """
     Maps the 'domain' column in the input DataFrame to the corresponding ECOD IDs
-    based on a provided mapping file, and renames the column to 'f_id'.
+    based on develop289 version, and renames the column to 'f_id'.
 
     Args:
         df (pandas.DataFrame): The input DataFrame containing a 'query_name' column.
@@ -205,6 +204,10 @@ def ECODmapping(df):
     Returns:
         pandas.DataFrame: The updated DataFrame 
     """
+    #with open('nm2id.json', 'r') as file:
+    #    f2x_mapping = json.load(file)
+    
+    from dotate_core.utils import f2x_mapping
 
     # Map the 'domain' column to corresponding ECOD IDs from the mapping data
     df['f_id'] = df['domain'].map(f2x_mapping).fillna('UNN')
@@ -273,49 +276,30 @@ def dotate(hmm_file, mapping=False, hmm_cov_co=0.75, iE_score_co=0.01, domain_co
         return ECODmapping(proteome_df)
     else: return proteome_df
 
-def store_SQL(hmm_file: str, df: pd.DataFrame, DB_CONFIG: dict):
+def store_SQL(hmm_file: str, df: pd.DataFrame, db_path: str):
     """
-    Stores the given DataFrame into a MySQL database. If the database does not exist, it is created.
+    Stores the given DataFrame into an SQLite database file. If the file does not exist, it is created.
     
     Parameters:
     - hmm_file (str): Name of the HMM file (used as the table name).
-    - df (pd.DataFrame): DataFrame to store in MySQL.
-    - DB_CONFIG (dict): MySQL connection details (including database).
+    - df (pd.DataFrame): DataFrame to store.
+    - db_path (str): Path to the SQLite database file (e.g., 'my_db.sqlite').
     """
-    # Extract database name from the config
-    database = DB_CONFIG.get('database')
+    if not db_path:
+        raise ValueError("A valid SQLite database file path must be provided.")
 
-    if not database:
-        raise ValueError("Database name must be provided in the SQL config.")
+    # Create SQLAlchemy engine for SQLite
+    engine = create_engine(f"sqlite:///{db_path}")
 
-    # Connect to MySQL (without specifying a database)
-    conn = mysql.connector.connect(
-        host=DB_CONFIG["host"],
-        user=DB_CONFIG["user"],
-        password=DB_CONFIG["password"]
-    )
-    cursor = conn.cursor()
+    # Create a valid table name from the hmm file
+    table_name = os.path.splitext(os.path.basename(hmm_file))[0]
+    table_name = table_name.replace(".", "_").replace(" ", "_").lower()
 
-    # Check if database exists
-    cursor.execute(f"SHOW DATABASES LIKE '{database}'")
-    db_exists = cursor.fetchone()
-
-    if not db_exists:
-        print(f"Database '{database}' does not exist. Creating it...")
-        cursor.execute(f"CREATE DATABASE {database}")
-    
-    # Close initial connection
-    cursor.close()
-    conn.close()
-
-    # Reconnect with the new database
-    engine = create_engine(f"mysql+mysqlconnector://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}/{database}")
-
-    # Ensure table name is valid (remove special characters, replace spaces with underscores)
-    table_name = os.path.splitext(os.path.basename(hmm_file))[0].replace(".", "_").replace(" ", "_").lower()
-
-    # Store the DataFrame in MySQL
+    # Store the DataFrame in SQLite
     df.to_sql(name=table_name, con=engine, if_exists="replace", index=False)
+
+    print(f"Data stored successfully in table '{table_name}' in SQLite database at '{db_path}'")
+
 
 def store_fasta(df: pd.DataFrame, output_file: str):
     """
@@ -353,8 +337,7 @@ def store_fasta(df: pd.DataFrame, output_file: str):
 if __name__ == "__main__":
     FASTA = 'testdotate.fasta'
     HMM = 'testdotate.tbl'
-    HMM = '/Users/longolab/Desktop/others/COG_hmm_domtblout/COG0001.tbl'
-    SQL = 'SQLconfig.json'
+    SQL = 'SQL.db'
 
     try:
         proteome_df = dotate(hmm_file=HMM)        
@@ -365,7 +348,7 @@ if __name__ == "__main__":
 
 
     try:
-        #store_fasta(ECODmapping(proteome_df), FASTA)
+        store_fasta(ECODmapping(proteome_df), FASTA)
         print("FASTA complete")
     except Exception as e:
         print(f"Error during fasta creation: {e}")
@@ -373,15 +356,14 @@ if __name__ == "__main__":
 
     try:
         output_file = 'dotate_out.tsv'
-        #ECODmapping(proteome_df).to_csv(output_file, sep='\t', index=False, header=True)
+        ECODmapping(proteome_df).to_csv(output_file, sep='\t', index=False, header=True)
         print("TSV complete")
     except Exception as e:
         print(f"Failed to save TSV file: {e}")
 
 
     try:
-        from argparse import load_sql_config
-        store_SQL(HMM, ECODmapping(proteome_df), load_sql_config(SQL))
+        store_SQL(HMM, ECODmapping(proteome_df), SQL)
         print("SQL complete")
     except Exception as e:
         print(f"Failed to store SQL: {e}")
